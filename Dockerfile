@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM node:14 AS builder
+FROM node:21 AS builder
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -15,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production Stage
-FROM node:14
+FROM node:21
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -30,8 +30,5 @@ RUN npm install --only=production
 # Copy environment files
 COPY .env .env
 
-# Expose the port
-EXPOSE 3000
-
 # Command to run the app
-CMD ["node", "dist/bundle.js"]
+CMD ["npm", "run", "start"]
