@@ -3,11 +3,13 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import router from './routes/index';
-import { errorHandler } from './middleware/errorHandler';
+import { errorHandler, notFoundErrorHandler } from './middleware/errorHandler';
+import { correlationIdMiddleware } from './middleware/correlationIdMiddleware';
 
 const app = express();
 
 app.use(express.json());
+app.use(correlationIdMiddleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(helmet());
@@ -16,5 +18,6 @@ app.use(cors());
 app.use('/api/v1', router);
 
 app.use(errorHandler);
+app.use(notFoundErrorHandler)
 
 export default app;
