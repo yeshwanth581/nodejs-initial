@@ -11,6 +11,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 
 export const notFoundErrorHandler = (req: Request, res: Response, next: NextFunction): void => {
   const error: NotFoundError = new NotFoundError('Resource not found')
+  logger.error(error.message, { correlationid: req.headers[CORRELATION_ID_HEADER] });
   res.status(error.statusCode).json(error);
   next()
 };

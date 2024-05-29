@@ -3,8 +3,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import router from './routes/index';
-import { errorHandler, notFoundErrorHandler } from './middleware/errorHandler';
-import { correlationIdMiddleware } from './middleware/correlationIdMiddleware';
+import { errorHandler, notFoundErrorHandler, correlationIdMiddleware } from './middleware';
 
 const app = express();
 

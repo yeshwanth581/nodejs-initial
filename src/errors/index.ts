@@ -1,7 +1,2 @@
-import InternalServerError from "./InternalServerError";
-import NotFoundError from "./NotFoundError";
-
-export  {
-    InternalServerError,
-    NotFoundError
-}
+export * from "./InternalServerError";
+export * from "./NotFoundError";
