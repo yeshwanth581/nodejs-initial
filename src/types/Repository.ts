@@ -18,6 +18,6 @@ export interface RepositoryItem {
     forks_count: number
     score: number
     breakdown?: Record<ScoringMetrics, { weight: number; value: number }>
-    oldScore?: number
-    diffPercentage?: number
+    oldScore?: number | null
+    diffPercentage?: number | null
 }

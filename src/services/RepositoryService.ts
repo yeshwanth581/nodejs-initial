@@ -1,7 +1,7 @@
 import axios from 'axios';
 import logger from '../utils/logger';
 import { API_BASE_URL, FETCH_ALL_REPOS_LIST_ENDPOINT, FETCH_REPO_INFO } from '../constants/contants';
-import { RepositoryItem, ScoringMetrics } from '../types/Repository';
+import { RepositoryItem, ScoringMetrics } from '../types/repository';
 import { getIndividualScore } from '../utils/scoringEngine';
 import { getAndClearCache, setCache, setCacheForMultipleItems } from '../providers';
 
@@ -55,7 +55,7 @@ export const fetchRepositoryInfo = async (owner: string, repo: string, excludedM
       };
     }
 
-    return transformedResponse;
+    return { ...transformedResponse, oldScore: null, diffPercentage: null };
   } catch (error) {
     logger.error(`An error occurred while fetching ${owner}/${repo} repository data from GitHub:`, error);
     throw error;

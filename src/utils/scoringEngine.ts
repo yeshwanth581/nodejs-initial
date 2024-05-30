@@ -1,4 +1,4 @@
-import { ScoringMetrics } from "../types/Repository";
+import { ScoringMetrics } from "../types/repository";
 
 interface RepoScoringData {
     stars: number;
@@ -43,7 +43,7 @@ export const getIndividualScore = (
     };
 };
 
-const getAdjustedWeights = (excludedScoreCriteria: ScoringMetrics[]): Record<ScoringMetrics, number> => {
+export const getAdjustedWeights = (excludedScoreCriteria: ScoringMetrics[]): Record<ScoringMetrics, number> => {
     // Calculate the total weight of the included metrics
     const includedMetrics = Object.keys(initialWeights).filter(
         (metric) => !excludedScoreCriteria.includes(metric as ScoringMetrics)

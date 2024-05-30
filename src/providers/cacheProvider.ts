@@ -1,5 +1,5 @@
 import NodeCache from 'node-cache';
-import { RepositoryItem } from '../types/Repository';
+import { RepositoryItem } from '../types/repository';
 const ONE_HOUR_TTL = 60 * 60 // 1hr
 const cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 });
 

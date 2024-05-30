@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { fetchAllRepositories, fetchRepositoryInfo } from '../services/RepositoryService';
-import { RepositoryItem, ScoringMetrics } from '../types/Repository';
+import { fetchAllRepositories, fetchRepositoryInfo } from '../services/repositoryService';
+import { RepositoryItem, ScoringMetrics } from '../types/repository';
 import { extractReqParams } from '../utils/reqParamsExtractor';
 
 export const getAllRepos = async (req: Request, res: Response, next: NextFunction) => {
