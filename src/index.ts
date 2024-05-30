@@ -16,6 +16,15 @@ function onListening() {
     logger.info(`Listening on port ${PORT}`);
 }
 
+// Listen for termination signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+  logger.error('Uncaught exception error', { error: error.message, stack: error.stack })
+});
+
 // Event listener for HTTP server "error" event.
 function onError(error: NodeJS.ErrnoException) {
     if (error.syscall !== 'listen') {
@@ -39,3 +48,18 @@ function onError(error: NodeJS.ErrnoException) {
             throw error;
     }
 }
+
+function gracefulShutdown(signal: string) {
+    logger.info(`Received ${signal}. Shutting down gracefully...`);
+    
+    server.close(() => {
+      logger.info('Closed out remaining connections.');
+      process.exit(0);
+    });
+  
+    // Force shutdown if connections are still open after 10 seconds
+    setTimeout(() => {
+      logger.error('Could not close connections in time, forcing shutdown');
+      process.exit(1);
+    }, 10000);
+};
