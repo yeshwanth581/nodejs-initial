@@ -4,6 +4,7 @@ dotenv.config();
 
 import app from './app';
 import logger from './utils/logger';
+import { closeCacheDB } from './providers/cacheProvider';
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,7 +23,7 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error: Error) => {
-  logger.error('Uncaught exception error', { error: error.message, stack: error.stack })
+    logger.error('Uncaught exception error', { error: error.message, stack: error.stack })
 });
 
 // Event listener for HTTP server "error" event.
@@ -49,17 +50,19 @@ function onError(error: NodeJS.ErrnoException) {
     }
 }
 
-function gracefulShutdown(signal: string) {
+async function gracefulShutdown(signal: string) {
     logger.info(`Received ${signal}. Shutting down gracefully...`);
-    
+
+    await closeCacheDB()
+
     server.close(() => {
-      logger.info('Closed out remaining connections.');
-      process.exit(0);
+        logger.info('Closed out remaining connections.');
+        process.exit(0);
     });
-  
+
     // Force shutdown if connections are still open after 10 seconds
     setTimeout(() => {
-      logger.error('Could not close connections in time, forcing shutdown');
-      process.exit(1);
+        logger.error('Could not close connections in time, forcing shutdown');
+        process.exit(1);
     }, 10000);
 };

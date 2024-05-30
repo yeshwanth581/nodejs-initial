@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { getRepositories, createSample } from '../controllers/repositories';
+import { getAllRepos, getRepoInfo } from '../controllers';
+import { validateQueryParams } from '../validators';
 
 const router = Router();
 
-router.get('/', getRepositories);
-router.post('/', createSample);
+router.get('/getAllRepos', validateQueryParams, getAllRepos);
+router.get('/:username/:repositoryName/getRepoInfo', getRepoInfo)
 
 export default router;
