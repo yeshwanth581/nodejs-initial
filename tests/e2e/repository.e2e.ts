@@ -3,10 +3,10 @@ import app from '../../src/app';
 
 describe('/api/v1/getAllRepos', () => {
     it('valid url', async () => {
-        const res = await request(app).get('/api/v1/getAllRepos?language=java&created=2020-01-01&limit=10');
+        const res = await request(app).get('/api/v1/getAllRepos?language=javascript&created=2020-01-01&limit=10');
         expect(res.statusCode).toEqual(200);
         expect(res.body.length).toEqual(10);
-        expect(res.body[0].language).toBe('Java')
+        expect(res.body[0].language).toBe('JavaScript')
         expect(new Date(res.body[0].created_at).getTime()).toBeGreaterThanOrEqual(new Date('2020-01-01').getTime())
     });
 
@@ -58,7 +58,7 @@ describe('/api/v1/getAllRepos', () => {
 
 describe('/api/v1/:owner/:repository/getRepoInfo', () => {
     it('valid url', async () => {
-        const res = await request(app).get('/api/v1/geekxh/hello-algorithm/getRepoInfo');
+        const res = await request(app).get('/api/v1/jtleek/datasharing/getRepoInfo');
         expect(res.statusCode).toEqual(200);
         expect(res.body).toHaveProperty('score');
         expect(res.body).toHaveProperty('oldScore');
@@ -67,7 +67,7 @@ describe('/api/v1/:owner/:repository/getRepoInfo', () => {
     });
 
     it('accept excludedScoreCriteria param with valid url', async () => {
-        const res = await request(app).get('/api/v1/geekxh/hello-algorithm/getRepoInfo?excludedScoreCriteria=recency');
+        const res = await request(app).get('/api/v1/jtleek/datasharing/getRepoInfo?excludedScoreCriteria=recency');
         expect(res.statusCode).toEqual(200);
         expect(res.body).toHaveProperty('score');
         expect(res.body).toHaveProperty('oldScore');

@@ -26,10 +26,12 @@ export const fetchAllRepositories = async (language: string, created: string, di
     });
 
     const response = await axios.get(decodeURIComponent(requestUrl.toString()));
-    const transformedResponse = transformRepositoriesWithScores(response.data, excludedMetrics);
-    await cacheRepositories(transformedResponse);
 
-    return transformedResponse;
+    const repositoriesList = response?.data?.items || []
+    repositoriesList.length && await cacheRepositories(repositoriesList)
+    const transformedRepositoriesList = repositoriesList.map((item: RepositoryItem) => calculateScoreAndTransformRepository(item, excludedMetrics));
+
+    return transformedRepositoriesList;
   } catch (error) {
     logger.error('An error occurred while fetching data from GitHub:', error);
     throw error;
@@ -40,18 +42,19 @@ export const fetchRepositoryInfo = async (owner: string, repo: string, excludedM
   try {
     const requestUrl = `${API_BASE_URL}/${FETCH_REPO_INFO}/${owner}/${repo}`;
     const response = await axios.get(requestUrl);
+    const repositoryInfo = response?.data || null
 
-    const transformedResponse = calculateRepositoryScore(response.data, excludedMetrics);
-    // fetch cached info of repo if available and upsert with new info
-    const cachedRepository = await getAndClearCache(transformedResponse.git_url);
-    await setCache(transformedResponse.git_url, transformedResponse);
+    const cachedRepository = await getAndClearCache(repositoryInfo.git_url);
+    repositoryInfo && await setCache(repositoryInfo.git_url, repositoryInfo);
+
+    const transformedResponse = calculateScoreAndTransformRepository(repositoryInfo, excludedMetrics);
 
     if (cachedRepository) {
-      const scoreOfCachedRepo = calculateRepositoryScore(cachedRepository, excludedMetrics)?.score
+      const cachedScore = calculateScoreAndTransformRepository(cachedRepository, excludedMetrics).score;
       return {
         ...transformedResponse,
-        oldScore: scoreOfCachedRepo,
-        diffPercentage: calculatePercentageDifference(transformedResponse.score, scoreOfCachedRepo)
+        oldScore: cachedScore,
+        diffPercentage: calculatePercentageDifference(transformedResponse.score, cachedScore)
       };
     }
 
@@ -62,16 +65,13 @@ export const fetchRepositoryInfo = async (owner: string, repo: string, excludedM
   }
 };
 
-const transformRepositoriesWithScores = (response: any, excludedMetrics: ScoringMetrics[]): RepositoryItem[] => {
-  return response.items.map((item: RepositoryItem) => calculateRepositoryScore(item, excludedMetrics));
-};
-
-const calculateRepositoryScore = (item: RepositoryItem, excludedMetrics: ScoringMetrics[]) => {
+const calculateScoreAndTransformRepository = (item: RepositoryItem, excludedMetrics: ScoringMetrics[]) => {
   const { id, git_url, full_name, description, created_at, language, stargazers_count, forks_count, updated_at } = item;
+
   const { stars, forks, recency } = getIndividualScore({ stars: stargazers_count, forks: forks_count, lastUpdated: new Date(updated_at) }, excludedMetrics);
   const totalScore = Number((stars.value + forks.value + recency.value).toFixed(2));
-
   const score = Math.min(100, totalScore);
+
   return {
     id,
     git_url,

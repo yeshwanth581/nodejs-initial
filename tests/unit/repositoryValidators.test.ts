@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { validateQueryParams } from '../../src/validators';
+import { fetchAllReposParamsValidator, fetchRepoInfoParamsValidator } from '../../src/validators';
 
 // Mocking the Request, Response, and NextFunction
 const mockRequest = (query: any) => {
@@ -27,7 +27,7 @@ describe('validateQueryParams Middleware', () => {
         const res = mockResponse();
         const next = mockNext();
 
-        validateQueryParams(req, res, next);
+        fetchAllReposParamsValidator(req, res, next);
 
         expect(next).toHaveBeenCalled();
         expect(res.status).not.toHaveBeenCalled();
@@ -41,7 +41,7 @@ describe('validateQueryParams Middleware', () => {
         const res = mockResponse();
         const next = mockNext();
 
-        validateQueryParams(req, res, next);
+        fetchAllReposParamsValidator(req, res, next);
 
         expect(next).toHaveBeenCalled();
         expect(res.status).not.toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe('validateQueryParams Middleware', () => {
         const res = mockResponse();
         const next = mockNext();
 
-        validateQueryParams(req, res, next);
+        fetchAllReposParamsValidator(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
@@ -73,7 +73,7 @@ describe('validateQueryParams Middleware', () => {
         const res = mockResponse();
         const next = mockNext();
 
-        validateQueryParams(req, res, next);
+        fetchAllReposParamsValidator(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
@@ -92,7 +92,7 @@ describe('validateQueryParams Middleware', () => {
         const res = mockResponse();
         const next = mockNext();
 
-        validateQueryParams(req, res, next);
+        fetchAllReposParamsValidator(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
@@ -110,11 +110,64 @@ describe('validateQueryParams Middleware', () => {
         const res = mockResponse();
         const next = mockNext();
 
-        validateQueryParams(req, res, next);
+        fetchAllReposParamsValidator(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
             message: expect.stringContaining('The valid values are stars,forks,recency. invalid is invalid')
+        }));
+        expect(next).not.toHaveBeenCalled();
+    });
+
+
+    it('should accept empty params for fetchRepoInfo schema', () => {
+        const req = mockRequest({});
+        const res = mockResponse();
+        const next = mockNext();
+
+        fetchRepoInfoParamsValidator(req, res, next);
+        expect(next).toHaveBeenCalled();
+    });
+
+    it('should return an error if excludedScoreCriteria contains invalid values for fetchRepoInfo schema', () => {
+        const req = mockRequest({
+            excludedScoreCriteria: 'stars,invalid'
+        });
+        const res = mockResponse();
+        const next = mockNext();
+
+        fetchRepoInfoParamsValidator(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+            message: expect.stringContaining('The valid values are stars,forks,recency. invalid is invalid')
+        }));
+        expect(next).not.toHaveBeenCalled();
+    });
+
+    it('should accept valud excludedScoreCriteria for fetchRepoInfo schema', () => {
+        const req = mockRequest({
+            excludedScoreCriteria: 'stars,recency'
+        });
+        const res = mockResponse();
+        const next = mockNext();
+
+        fetchRepoInfoParamsValidator(req, res, next);
+        expect(next).toHaveBeenCalled();
+    });
+
+    it('should return an error if excludedScoreCriteria has more than 2 values for fetchRepoInfo schema', () => {
+        const req = mockRequest({
+            excludedScoreCriteria: 'stars,forks,recency'
+        });
+        const res = mockResponse();
+        const next = mockNext();
+
+        fetchRepoInfoParamsValidator(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+            message: expect.stringContaining('At most two values are allowed')
         }));
         expect(next).not.toHaveBeenCalled();
     });

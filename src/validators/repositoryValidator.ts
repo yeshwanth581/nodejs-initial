@@ -19,9 +19,9 @@ const customValidationForScoringCriteria = (value: string, helpers: Joi.CustomHe
   return value;
 }
 
-const querySchema = Joi.object({
+const fetchAllReposParamsSchema = Joi.object({
   language: Joi.string().required(),
-  created: Joi.string().regex(/^\d{4}-\d{2}-\d{2}$/).required(),
+  created: Joi.string().regex(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])*$/).required(),
   limit: Joi.number().integer().optional(),
   page: Joi.number().integer().optional(),
   order: Joi.string().valid('asc', 'desc').optional(),
@@ -29,8 +29,25 @@ const querySchema = Joi.object({
   excludedScoreCriteria: Joi.string().custom(customValidationForScoringCriteria, 'custom validation').optional(),
 });
 
-export const validateQueryParams = (req: Request, res: Response, next: NextFunction) => {
-  const { error: validationError } = querySchema.validate(req.query, { abortEarly: false });
+const fetchRepoInfoParamsSchema = Joi.object({
+  excludedScoreCriteria: Joi.string().custom(customValidationForScoringCriteria, 'custom validation').optional(),
+});
+
+export const fetchAllReposParamsValidator = (req: Request, res: Response, next: NextFunction) => {
+  const { error: validationError } = fetchAllReposParamsSchema.validate(req.query, { abortEarly: false });
+
+  if (validationError) {
+    const errorMessage = validationError.details.map(detail => detail.message).join()
+    const customMessage = validationError.details.map(detail => detail.context?.customMessage).join()
+    const error = new InvalidRequestError(customMessage || errorMessage)
+
+    return res.status(error.statusCode).json(error)
+  }
+  next();
+};
+
+export const fetchRepoInfoParamsValidator = (req: Request, res: Response, next: NextFunction) => {
+  const { error: validationError } = fetchRepoInfoParamsSchema.validate(req.query, { abortEarly: false });
 
   if (validationError) {
     const errorMessage = validationError.details.map(detail => detail.message).join()
