@@ -41,9 +41,10 @@ This is a simple Node.js Express API application that fetches repository data fr
     5. In the API resp along with repo info, there will be info about the score of the repo and breakdown of them to explain how the score is calcualted.
     6. Based on the ```excludedScoreCriteria``` param data the breakdown values and weights will be adjusted. This gives user the flexibility to selectively consider score based on their interests.
 3. ```getRepoInfo```
-    1. This endpoint will give info about a particular repo.
-    2. For sake of simplicity the resp is similar to ```/getAllRepos``` resp with additional ```oldScore, diffPercentage```
-    3. The ```oldScore``` key will give info about the score based on lastSearch for this repo.
-    4. The ```diffPercentage``` will give the change percentage of scores(current and previous). The positive percentage infers a increase in score and negative infers opposite.
-    5. We can also use ```excludedScoreCriteria``` query param to get score info for old, current repo data conditionally for flexible comparision. Based on this data the score is dynamically calculated betwen both info.
-    6. We can use DB too, to store data of previous search. But I felt it is a overkill so went with a in-memory cache DB to store previous search data.
+    1. The reason why this endpoint is implemented is i didnt wanted to show old score on the initial search as it will require more resources, So I felt it would be better to get this info for one repo at a time than for all repos in the initial search.
+    2. This endpoint will give info about a particular repo.
+    3. For sake of simplicity the resp is similar to ```/getAllRepos``` resp with additional ```oldScore, diffPercentage```
+    4. The ```oldScore``` key will give info about the score based on lastSearch for this repo.
+    5. The ```diffPercentage``` will give the change percentage of scores(current and previous). The positive percentage infers a increase in score and negative infers opposite.
+    6. We can also use ```excludedScoreCriteria``` query param to get score info for old, current repo data conditionally for flexible comparision. Based on this data the score is dynamically calculated betwen both info.
+    7. We can use DB too, to store data of previous search. But I felt it is a overkill so went with a in-memory cache DB to store previous search data.
