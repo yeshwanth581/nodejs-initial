@@ -62,7 +62,18 @@ describe('/api/v1/:owner/:repository/getRepoInfo', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body).toHaveProperty('score');
         expect(res.body).toHaveProperty('oldScore');
+        expect(JSON.stringify(res.body.oldScore)).toEqual("null")
         expect(res.body).toHaveProperty('diffPercentage');
+    });
+
+    it('accept excludedScoreCriteria param with valid url', async () => {
+        const res = await request(app).get('/api/v1/geekxh/hello-algorithm/getRepoInfo?excludedScoreCriteria=recency');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('score');
+        expect(res.body).toHaveProperty('oldScore');
+        expect(res.body).toHaveProperty('diffPercentage');
+        expect(JSON.stringify(res.body.breakdown.recency)).toEqual("{\"weight\":0,\"value\":0}")
+        expect(JSON.stringify(res.body.oldScore)).not.toEqual(null)
     });
 
     it('with missing owner parm in path param', async () => {
