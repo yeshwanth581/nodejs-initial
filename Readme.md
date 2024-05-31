@@ -12,7 +12,7 @@ This is a simple Node.js Express API application that fetches repository data fr
 ### Installation
 
 * Clone the repository
-    * ```git clone https://github.com/yeshwanth581/nodejs-initial.git```
+    * ```git clone https://github.com/yeshwanth581/redcare-pharmacy-assignment.git```
 
 * Install dependencies
     * ```npm install```
