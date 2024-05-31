@@ -30,3 +30,20 @@ This is a simple Node.js Express API application that fetches repository data fr
 * Run the app in docker container
     * For dev env: ```docker-compose up app-dev``` 
     * For prod env: ```docker-compose up app-prod``` 
+
+### Notes:
+1. Implemented two endpoints ```/getAllRepos``` and ```/getRepoInfo```.
+2. ```getAllRepos```
+    1. This endpoint is used to fetch all repos based on user inputs for language and repo creation date.
+    2. API has the capability to sort, order, adjust the results via pagination(limit,page,order,sortBy)
+    3. A score is calcualted based on stars, forks, recency of updates for a repo. The weight percentage is stars(50%), forks(30%), recency(20%)
+    4. Using the ```excludedScoreCriteria``` query param we can ignore at max 2 of 3 criteria for scoring. Ex: ...&excludedScoreCriteria=forks,recency or ...&excludedScoreCriteria=stars
+    5. In the API resp along with repo info, there will be info about the score of the repo and breakdown of them to explain how the score is calcualted.
+    6. Based on the ```excludedScoreCriteria``` param data the breakdown values and weights will be adjusted. This gives user the flexibility to selectively consider score based on their interests.
+3. ```getRepoInfo```
+    1. This endpoint will give info about a particular repo.
+    2. For sake of simplicity the resp is similar to ```/getAllRepos``` resp with additional ```oldScore, diffPercentage```
+    3. The ```oldScore``` key will give info about the score based on lastSearch for this repo.
+    4. The ```diffPercentage``` will give the change percentage of scores(current and previous). The positive percentage infers a increase in score and negative infers opposite.
+    5. We can also use ```excludedScoreCriteria``` query param to get score info for old, current repo data conditionally for flexible comparision. Based on this data the score is dynamically calculated betwen both info.
+    6. We can use DB too, to store data of previous search. But I felt it is a overkill so went with a in-memory cache DB to store previous search data.

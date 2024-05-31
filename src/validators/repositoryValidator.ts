@@ -25,7 +25,7 @@ const fetchAllReposParamsSchema = Joi.object({
   limit: Joi.number().integer().optional(),
   page: Joi.number().integer().optional(),
   order: Joi.string().valid('asc', 'desc').optional(),
-  sortBy: Joi.string().optional(),
+  sortBy: Joi.string().valid('stars', 'forks', 'updated').optional(),
   excludedScoreCriteria: Joi.string().custom(customValidationForScoringCriteria, 'custom validation').optional(),
 });
 
