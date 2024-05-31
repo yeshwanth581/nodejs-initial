@@ -12,16 +12,16 @@ This is a simple Node.js Express API application that fetches repository data fr
 ### Installation
 
 * Clone the repository
-```git clone https://github.com/yeshwanth581/nodejs-initial.git```
+    * ```git clone https://github.com/yeshwanth581/nodejs-initial.git```
 
-* Run the unit tests
-```npm run test:unit```
+* Install dependencies
+    * ```npm install```
 
-* Run the e2e tests
-```npm run test:e2e```
+* Run the unit and e2e tests
+    * ```npm run test```
 
 * Run the app in dev mode
-```npm run dev```
+    * ```npm run dev```
 
 * Run the app in prod mode
     * ```npm run build```
