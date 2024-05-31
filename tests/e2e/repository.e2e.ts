@@ -60,9 +60,9 @@ describe('/api/v1/:owner/:repository/getRepoInfo', () => {
     it('valid url', async () => {
         const res = await request(app).get('/api/v1/geekxh/hello-algorithm/getRepoInfo');
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toContain('score');
-        expect(res.body).toContain('oldScore');
-        expect(res.body).toContain('diffPercentage');
+        expect(res.body).toHaveProperty('score');
+        expect(res.body).toHaveProperty('oldScore');
+        expect(res.body).toHaveProperty('diffPercentage');
     });
 
     it('with missing owner parm in path param', async () => {
